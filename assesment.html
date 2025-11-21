@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Strategic Department Assessment</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #64748b;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 16px;
+            line-height: 1.5;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 24px 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .admin-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        /* Timer Styling */
+        .timer-container {
+            background: var(--light);
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border);
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .timer-active .timer-container {
+            display: flex;
+        }
+
+        .timer-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .timer-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            background: white;
+            padding: 8px 16px;
+            border-radius: 10px;
+            border: 2px solid var(--border);
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .timer-warning {
+            color: var(--warning);
+        }
+
+        .timer-critical {
+            color: var(--danger);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .timer-info {
+            font-size: 0.8rem;
+            color: var(--secondary);
+            text-align: right;
+            flex: 1;
+        }
+
+        /* Login Form Styling */
+        .login-container {
+            display: none;
+            padding: 30px 20px;
+            text-align: center;
+        }
+
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+            background: var(--light);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .login-form h2 {
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .login-info {
+            background: #e8f4fd;
+            border: 1px solid #b3d9ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .login-info h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .dept-selector {
+            padding: 20px;
+            background: var(--light);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .dept-selector select {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 1rem;
+            background: white;
+            -webkit-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 18px;
+        }
+
+        .assessment-form {
+            padding: 0;
+        }
+
+        .category {
+            border-bottom: 1px solid var(--border);
+            padding: 0;
+        }
+
+        .category-header {
+            padding: 20px;
+            background: var(--light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        .category-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .category-header i {
+            transition: transform 0.3s ease;
+        }
+
+        .category.active .category-header i {
+            transform: rotate(180deg);
+        }
+
+        .questions {
+            display: none;
+            padding: 0 20px 20px;
+        }
+
+        .category.active .questions {
+            display: block;
+        }
+
+        .question {
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .question:last-child {
+            border-bottom: none;
+        }
+
+        .question-text {
+            font-weight: 500;
+            margin-bottom: 16px;
+            font-size: 1rem;
+            color: var(--dark);
+        }
+
+        .rating-options {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .rating-option {
+            flex: 1;
+            text-align: center;
+            padding: 12px 8px;
+            background: var(--light);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .rating-option:hover, .rating-option.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .rating-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--secondary);
+            padding: 0 4px;
+        }
+
+        .comments {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 80px;
+            margin-top: 8px;
+        }
+
+        .progress-section {
+            padding: 20px;
+            background: var(--light);
+            border-top: 1px solid var(--border);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--border);
+            border-radius: 4px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: var(--secondary);
+        }
+
+        .actions {
+            padding: 20px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--dark);
+            border: 2px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        /* Results Styling */
+        .results-container {
+            display: none;
+            padding: 20px;
+        }
+
+        .score-card {
+            background: var(--light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .score-value {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+
+        .score-label {
+            font-size: 1.1rem;
+            color: var(--secondary);
+        }
+
+        .time-score {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .time-score h4 {
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .category-scores {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .category-score {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .category-score h4 {
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            color: var(--secondary);
+        }
+
+        .category-score .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .recommendations {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .recommendations h3 {
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+
+        .recommendations ul {
+            padding-left: 20px;
+        }
+
+        .recommendations li {
+            margin-bottom: 8px;
+        }
+
+        /* Admin Dashboard Styling */
+        .admin-dashboard {
+            display: none;
+            padding: 20px;
+        }
+
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 5px 0;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--secondary);
+        }
+
+        .department-comparison {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .submissions-list {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .submission-item {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .submission-item:last-child {
+            border-bottom: none;
+        }
+
+        .score-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .score-high { background: var(--success); color: white; }
+        .score-medium { background: var(--warning); color: white; }
+        .score-low { background: var(--danger); color: white; }
+
+        .admin-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 480px) {
+            .category-scores, .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .actions {
+                flex-direction: column;
+            }
+            
+            .rating-options {
+                flex-direction: column;
+                gap: 6px;
+            }
+            
+            .rating-option {
+                padding: 14px 8px;
+            }
+            
+            .admin-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .admin-actions {
+                flex-direction: column;
+            }
+            
+            .timer-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 8px;
+            }
+            
+            .timer-info {
+                text-align: center;
+            }
+        }
+
+        /* iOS specific fixes */
+        @supports (-webkit-touch-callout: none) {
+            body {
+                padding: 16px;
+                padding-bottom: 40px;
+            }
+            
+            .btn {
+                padding: 18px;
+            }
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Assessment Header -->
+        <div class="header">
+            <h1><i class="fas fa-chart-line"></i> Strategic Department Assessment</h1>
+            <p>Evaluate your department's strategic alignment and performance</p>
+            <button class="admin-toggle" id="adminToggle">
+                <i class="fas fa-cog"></i> Admin
+            </button>
+        </div>
+
+        <!-- Timer Section -->
+        <div class="timer-container" id="timerContainer">
+            <div class="timer-display">
+                <i class="fas fa-clock"></i>
+                <div class="timer-value" id="timerValue">00:00</div>
+                <span>Time Elapsed</span>
+            </div>
+            <div class="timer-info">
+                <i class="fas fa-info-circle"></i> 
+                Timer started when you began the assessment
+            </div>
+        </div>
+
+        <!-- Admin Login Form -->
+        <div class="login-container" id="loginContainer">
+            <div class="login-form">
+                <h2><i class="fas fa-lock"></i> Admin Login</h2>
+                
+                <div class="login-info">
+                    <h4><i class="fas fa-shield-alt"></i> Secure Access</h4>
+                    <p style="color: var(--secondary); font-size: 0.9rem;">
+                        Please contact system administrator for login credentials
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label for="adminId"><i class="fas fa-user"></i> Admin ID</label>
+                    <input type="text" id="adminId" placeholder="Enter your admin ID">
+                    <div class="error-message" id="idError">Please enter valid Admin ID</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="adminPassword"><i class="fas fa-key"></i> Password</label>
+                    <input type="password" id="adminPassword" placeholder="Enter your password">
+                    <div class="error-message" id="passwordError">Please enter valid password</div>
+                </div>
+
+                <div class="actions">
+                    <button class="btn btn-secondary" id="backToMain">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </button>
+                    <button class="btn btn-primary" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Assessment Form -->
+        <div class="assessment-form" id="assessmentForm">
+            <div class="dept-selector">
+                <select id="department">
+                    <option value="">Select Your Department</option>
+                    <option value="sales">Sales</option>
+                    <option value="operations">Operations</option>
+                    <option value="mis">MIS</option>
+                    <option value="logistics">Logistics</option>
+                    <option value="store">Store</option>
+                    <option value="warranty">Warranty</option>
+                    <option value="accounts">Accounts</option>
+                </select>
+            </div>
+
+            <!-- Strategic Alignment Category -->
+            <div class="category active">
+                <div class="category-header">
+                    <h3><i class="fas fa-bullseye"></i> Strategic Alignment (5 Questions)</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="questions">
+                    <div class="question">
+                        <div class="question-text">1. How clearly do you understand how your department's goals contribute to overall business strategy?</div>
+                        <div class="rating-options">
+                            <div class="rating-option" data-value="1">Very Low</div>
+                            <div class="rating-option" data-value="2">Low</div>
+                            <div class="rating-option" data-value="3">Moderate</div>
+                            <div class="rating-option" data-value="4">High</div>
+                            <div class="rating-option" data-value="5">Very High</div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>No clarity</span>
+                            <span>Full clarity</span>
+                        </div>
+                        <textarea class="comments" placeholder="Additional comments..."></textarea>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">2. To what extent are your daily activities aligned with strategic priorities?</div>
+                        <div class="rating-options">
+                            <div class="rating-option" data-value="1">Very Low</div>
+                            <div class="rating-option" data-value="2">Low</div>
+                            <div class="rating-option" data-value="3">Moderate</div>
+                            <div class="rating-option" data-value="4">High</div>
+                            <div class="rating-option" data-value="5">Very High</div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Misaligned</span>
+                            <span>Fully aligned</span>
+                        </div>
+                        <textarea class="comments" placeholder="Additional comments..."></textarea>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">3. How well does your department collaborate with other departments to achieve common goals?</div>
+                        <div class="rating-options">
+                            <div class="rating-option" data-value="1">Very Low</div>
+                            <div class="rating-option" data-value="2">Low</div>
+                            <div class="rating-option" data-value="3">Moderate</div>
+                            <div class="rating-option" data-value="4">High</div>
+                            <div class="rating-option" data-value="5">Very High</div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Siloed</span>
+                            <span>Fully integrated</span>
+                        </div>
+                        <textarea class="comments" placeholder="Additional comments..."></textarea>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">4. How effective is your department in adapting to changing business priorities?</div>
+                        <div class="rating-options">
+                            <div class="rating-option" data-value="1">Very Low</div>
+                            <div class="rating-option" data-value="2">Low</div>
+                            <div class="rating-option" data-value="3">Moderate</div>
+                            <div class="rating-option" data-value="4">High</div>
+                            <div class="rating-option" data-value="5">Very High</div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Rigid</span>
+                            <span>Highly adaptive</span>
+                        </div>
+                        <textarea class="comments" placeholder="Additional comments..."></textarea>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">5. How well are resources allocated to support strategic initiatives?</div>
+                        <div class="rating-options">
+                            <div class="rating-option" data-value="1">Very Low</div>
+                            <div class="rating-option" data-value="2">Low</div>
+                            <div class="rating-option" data-value="3">Moderate</div>
+                            <div class="rating-option" data-value="4">High</div>
+                            <div class="rating-option" data-value="5">Very High</div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Poor allocation</span>
+                            <span>Optimal allocation</span>
+                        </div>
+                        <textarea class="comments" placeholder="Additional comments..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Process Efficiency Category -->
+            <div class="category">
+                <div class="category-header">
+                    <h3><i class="fas fa-cogs"></i> Process Efficiency (5 Questions)</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="questions">
+                    <div class="question">
+                        <div class="question-text">6. How effective are your current processes in achieving desired outcomes with minimal waste?</div>
+                        <div class="rating-options">
+                            <div class="rating-option" data-value="1">Very Low</div>
+                            <div class="rating-option" data-value="2">Low</div>
+                            <div class="rating-option" data-value="3">Moderate</div>
+                            <div class="rating-option" data-value="4">High</div>
+                            <div class="rating-option" data-value="5">Very High</div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Inefficient</span>
+                            <span>Highly efficient</span>
+                        </div>
+                        <textarea class="comments" placeholder="Additional comments..."></textarea>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">7. How well do you leverage technology to automate and streamline operations?</div>
+                        <div class="rating-options">
+                            <div class="rating-option" data-value="1">Very Low</div>
+                            <div class="rating-option" data-value="2">Low</div>
+                            <div class="rating-option" data-value="3">Moderate</div>
+                            <div class="rating-option" data-value="4">High</div>
+                            <div class="rating-option" data-value="5">Very High</div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Manual</span>
+                            <span>Fully automated</span>
+                        </div>
+                        <textarea class="comments" placeholder="Additional comments..."></textarea>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">8. How effective is your department's workflow management and task prioritization?</div>
+                        <div class="rating-options">
+                            <div class="rating-option" data-value="1">Very Low</div>
+                            <div class="rating-option" data-value="2">Low</div>
+                            <div class="rating-option" data-value="3">Moderate</div>
+                            <div class="rating-option" data-value="4">High</div>
+                            <div class="rating-option" data-value="5">Very High</div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Chaotic</span>
+                            <span>Well-organized</span>
+                        </div>
+                        <textarea class="comments" placeholder="Additional comments..."></textarea>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">9. How well does your department document and standardize procedures?</div>
+                        <div class="rating-options">
+                            <div class="rating-option" data-value="1">Very Low</div>
+                            <div class="rating-option" data-value="2">Low</div>
+                            <div class="rating-option" data-value="3">Moderate</div>
+                            <div class="rating-option" data-value="4">High</div>
+                            <div class="rating-option" data-value="5">Very High</div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>No documentation</span>
+                            <span>Fully documented</span>
+                        </div>
+                        <textarea class="comments" placeholder="Additional comments..."></textarea>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">10. How effective is your continuous improvement process?</div>
+                        <div class="rating-options">
+                            <div class="rating-option" data-value="1">Very Low</div>
+                            <div class="rating-option" data-value="2">Low</div>
+                            <div class="rating-option" data-value="3">Moderate</div>
+                            <div class="rating-option" data-value="4">High</div>
+                            <div class="rating-option" data-value="5">Very High</div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>No improvement</span>
+                            <span>Continuous improvement</span>
+                        </div>
+                        <textarea class="comments" placeholder="Additional comments..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Performance Measurement Category -->
+            <div class="category">
+                <div class="category-header">
+                    <h3><i class="fas fa-chart-bar"></i> Performance Measurement (5 Questions)</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="questions">
+                    <div class="question">
+                        <div class="question-text">11. How effectively does your department track and measure key performance indicators?</div>
+                        <div class="rating-options">
+                            <div class="rating-option" data-value="1">Very Low</div>
+                            <div class="rating-option" data-value="2">Low</div>
+                            <div class="rating-option" data-value="3">Moderate</div>
+                            <div class="rating-option" data-value="4">High</div>
+                            <div class="rating-option" data-value="5">Very High</div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>No tracking</span>
+                            <span>Comprehensive tracking</span>
+                        </div>
+                        <textarea class="comments" placeholder="Additional comments..."></textarea>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">12. How well are performance metrics aligned with strategic objectives?</div>
+                        <div class="rating-options">
+                            <div class="rating-option" data-value="1">Very Low</div>
+                            <div class="rating-option" data-value="2">Low</div>
+                            <div class="rating-option" data-value="3">Moderate</div>
+                            <div class="rating-option" data-value="4">High</div>
+                            <div class="rating-option" data-value="5">Very High</div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Misaligned</span>
+                            <span>Perfectly aligned</span>
+                        </div>
+                        <textarea class="comments" placeholder="Additional comments..."></textarea>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">13. How effective is your data-driven decision-making process?</div>
+                        <div class="rating-options">
+                            <div class="rating-option" data-value="1">Very Low</div>
+                            <div class="rating-option" data-value="2">Low</div>
+                            <div class="rating-option" data-value="3">Moderate</div>
+                            <div class="rating-option" data-value="4">High</div>
+                            <div class="rating-option" data-value="5">Very High</div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Gut feeling</span>
+                            <span>Data-driven</span>
+                        </div>
+                        <textarea class="comments" placeholder="Additional comments..."></textarea>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">14. How timely and actionable are your performance reports?</div>
+                        <div class="rating-options">
+                            <div class="rating-option" data-value="1">Very Low</div>
+                            <div class="rating-option" data-value="2">Low</div>
+                            <div class="rating-option" data-value="3">Moderate</div>
+                            <div class="rating-option" data-value="4">High</div>
+                            <div class="rating-option" data-value="5">Very High</div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Delayed, useless</span>
+                            <span>Real-time, actionable</span>
+                        </div>
+                        <textarea class="comments" placeholder="Additional comments..."></textarea>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">15. How well does your department use analytics for predictive insights?</div>
+                        <div class="rating-options">
+                            <div class="rating-option" data-value="1">Very Low</div>
+                            <div class="rating-option" data-value="2">Low</div>
+                            <div class="rating-option" data-value="3">Moderate</div>
+                            <div class="rating-option" data-value="4">High</div>
+                            <div class="rating-option" data-value="5">Very High</div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Reactive</span>
+                            <span>Predictive</span>
+                        </div>
+                        <textarea class="comments" placeholder="Additional comments..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leadership & Team Development Category -->
+            <div class="category">
+                <div class="category-header">
+                    <h3><i class="fas fa-users"></i> Leadership & Team Development (5 Questions)</h3>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="questions">
+                    <div class="question">
+                        <div class="question-text">16. How effective is your leadership in driving strategic execution?</div>
+                        <div class="rating-options">
+                            <div class="rating-option" data-value="1">Very Low</div>
+                            <div class="rating-option" data-value="2">Low</div>
+                            <div class="rating-option" data-value="3">Moderate</div>
+                            <div class="rating-option" data-value="4">High</div>
+                            <div class="rating-option" data-value="5">Very High</div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Ineffective</span>
+                            <span>Highly effective</span>
+                        </div>
+                        <textarea class="comments" placeholder="Additional comments..."></textarea>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">17. How well does your department develop talent for future leadership roles?</div>
+                        <div class="rating-options">
+                            <div class="rating-option" data-value="1">Very Low</div>
+                            <div class="rating-option" data-value="2">Low</div>
+                            <div class="rating-option" data-value="3">Moderate</div>
+                            <div class="rating-option" data-value="4">High</div>
+                            <div class="rating-option" data-value="5">Very High</div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>No development</span>
+                            <span>Strong pipeline</span>
+                        </div>
+                        <textarea class="comments" placeholder="Additional comments..."></textarea>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">18. How effective is cross-functional knowledge sharing?</div>
+                        <div class="rating-options">
+                            <div class="rating-option" data-value="1">Very Low</div>
+                            <div class="rating-option" data-value="2">Low</div>
+                            <div class="rating-option" data-value="3">Moderate</div>
+                            <div class="rating-option" data-value="4">High</div>
+                            <div class="rating-option" data-value="5">Very High</div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Knowledge silos</span>
+                            <span>Free sharing</span>
+                        </div>
+                        <textarea class="comments" placeholder="Additional comments..."></textarea>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">19. How well does your department foster innovation and creative thinking?</div>
+                        <div class="rating-options">
+                            <div class="rating-option" data-value="1">Very Low</div>
+                            <div class="rating-option" data-value="2">Low</div>
+                            <div class="rating-option" data-value="3">Moderate</div>
+                            <div class="rating-option" data-value="4">High</div>
+                            <div class="rating-option" data-value="5">Very High</div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Stagnant</span>
+                            <span>Highly innovative</span>
+                        </div>
+                        <textarea class="comments" placeholder="Additional comments..."></textarea>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-text">20. How effective is your change management process?</div>
+                        <div class="rating-options">
+                            <div class="rating-option" data-value="1">Very Low</div>
+                            <div class="rating-option" data-value="2">Low</div>
+                            <div class="rating-option" data-value="3">Moderate</div>
+                            <div class="rating-option" data-value="4">High</div>
+                            <div class="rating-option" data-value="5">Very High</div>
+                        </div>
+                        <div class="rating-labels">
+                            <span>Resistant to change</span>
+                            <span>Embraces change</span>
+                        </div>
+                        <textarea class="comments" placeholder="Additional comments..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="progress-section">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text">
+                    <span>Completion</span>
+                    <span id="progressText">0%</span>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-secondary" id="prevBtn">
+                    <i class="fas fa-arrow-left"></i> Previous
+                </button>
+                <button class="btn btn-primary" id="nextBtn">
+                    Next <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-container" id="resultsContainer">
+            <div class="score-card">
+                <div class="score-label">Overall Strategic Score</div>
+                <div class="score-value" id="overallScore">0</div>
+                <div id="scoreMessage">Based on your department assessment</div>
+            </div>
+
+            <div class="time-score">
+                <h4><i class="fas fa-clock"></i> Assessment Completion Time</h4>
+                <div class="timer-value" id="finalTime">00:00</div>
+                <p style="margin-top: 8px; color: var(--secondary); font-size: 0.9rem;">
+                    Time taken to complete the assessment
+                </p>
+            </div>
+
+            <div class="category-scores" id="categoryScores">
+                <!-- Dynamic category scores will be inserted here -->
+            </div>
+
+            <div class="recommendations">
+                <h3><i class="fas fa-lightbulb"></i> Strategic Recommendations</h3>
+                <ul id="recommendationsList">
+                    <!-- Recommendations will be inserted here -->
+                </ul>
+            </div>
+
+            <div class="actions">
+                <button class="btn btn-secondary" id="retakeBtn">
+                    <i class="fas fa-redo"></i> Retake Assessment
+                </button>
+                <button class="btn btn-primary" id="submitBtn">
+                    <i class="fas fa-paper-plane"></i> Submit Results
+                </button>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div class="admin-dashboard" id="adminDashboard">
+            <div class="admin-header">
+                <h2><i class="fas fa-tachometer-alt"></i> Admin Dashboard</h2>
+                <div class="admin-actions">
+                    <button class="btn btn-danger" id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                    <button class="btn btn-secondary" id="backToAssessment">
+                        <i class="fas fa-arrow-left"></i> Back to Assessment
+                    </button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="totalSubmissions">0</div>
+                    <div class="stat-label">Total Submissions</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="avgScore">0%</div>
+                    <div class="stat-label">Average Score</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="completionRate">0%</div>
+                    <div class="stat-label">Completion Rate</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="departmentsCount">0</div>
+                    <div class="stat-label">Departments</div>
+                </div>
+            </div>
+
+            <div class="department-comparison">
+                <h3><i class="fas fa-chart-bar"></i> Department Performance</h3>
+                <div id="deptScoresList">
+                    <!-- Department scores will be listed here -->
+                </div>
+            </div>
+
+            <div class="submissions-list">
+                <h3><i class="fas fa-list"></i> Recent Submissions</h3>
+                <div id="submissionsList">
+                    <!-- Submissions will be listed here -->
+                </div>
+            </div>
+
+            <div class="admin-actions">
+                <button class="btn btn-danger" id="clearDataBtn">
+                    <i class="fas fa-trash"></i> Clear All Data
+                </button>
+                <button class="btn btn-secondary" id="exportDataBtn">
+                    <i class="fas fa-download"></i> Export Data
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Mobile-optimized JavaScript with Timer Feature
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const categories = document.querySelectorAll('.category');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const assessmentForm = document.getElementById('assessmentForm');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const adminDashboard = document.getElementById('adminDashboard');
+            const loginContainer = document.getElementById('loginContainer');
+            const adminToggle = document.getElementById('adminToggle');
+            const backToAssessment = document.getElementById('backToAssessment');
+            const backToMain = document.getElementById('backToMain');
+            const loginBtn = document.getElementById('loginBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const retakeBtn = document.getElementById('retakeBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            const departmentSelect = document.getElementById('department');
+            const clearDataBtn = document.getElementById('clearDataBtn');
+            const exportDataBtn = document.getElementById('exportDataBtn');
+            const timerContainer = document.getElementById('timerContainer');
+            const timerValue = document.getElementById('timerValue');
+            const finalTime = document.getElementById('finalTime');
+
+            // Login DOM Elements
+            const adminIdInput = document.getElementById('adminId');
+            const adminPasswordInput = document.getElementById('adminPassword');
+            const idError = document.getElementById('idError');
+            const passwordError = document.getElementById('passwordError');
+
+            // Admin Credentials (Hidden from users)
+            const ADMIN_CREDENTIALS = {
+                id: 'admin',
+                password: 'Admin@2024'
+            };
+
+            // Timer Variables
+            let timerInterval;
+            let startTime;
+            let elapsedTime = 0;
+            let isTimerRunning = false;
+
+            // State management
+            let currentCategory = 0;
+            const scores = {
+                'Strategic Alignment': 0,
+                'Process Efficiency': 0,
+                'Performance Measurement': 0,
+                'Leadership & Team Development': 0
+            };
+
+            // Sample data for admin dashboard
+            const sampleSubmissions = [
+                { department: 'Sales', score: 78, date: '2024-01-15', completed: true, timeTaken: '12:45' },
+                { department: 'Operations', score: 65, date: '2024-01-14', completed: true, timeTaken: '15:20' },
+                { department: 'MIS', score: 82, date: '2024-01-14', completed: true, timeTaken: '10:30' },
+                { department: 'Logistics', score: 71, date: '2024-01-13', completed: true, timeTaken: '18:15' },
+                { department: 'Store', score: 59, date: '2024-01-12', completed: true, timeTaken: '22:40' },
+                { department: 'Warranty', score: 68, date: '2024-01-12', completed: true, timeTaken: '14:25' },
+                { department: 'Accounts', score: 74, date: '2024-01-11', completed: true, timeTaken: '16:50' }
+            ];
+
+            // Initialize
+            updateProgress();
+            setupEventListeners();
+            initializeAdminDashboard();
+
+            function setupEventListeners() {
+                // Category headers for accordion
+                categories.forEach((category, index) => {
+                    const header = category.querySelector('.category-header');
+                    header.addEventListener('click', () => {
+                        category.classList.toggle('active');
+                        
+                        categories.forEach((cat, i) => {
+                            if (i !== index) {
+                                cat.classList.remove('active');
+                            }
+                        });
+                    });
+                });
+
+                // Rating options - Start timer on first interaction
+                document.querySelectorAll('.rating-option').forEach(option => {
+                    option.addEventListener('click', function() {
+                        if (!isTimerRunning) {
+                            startTimer();
+                        }
+                        
+                        const question = this.closest('.question');
+                        const options = question.querySelectorAll('.rating-option');
+                        
+                        options.forEach(opt => opt.classList.remove('selected'));
+                        this.classList.add('selected');
+                        
+                        updateProgress();
+                    });
+                });
+
+                // Comments - Start timer on first interaction
+                document.querySelectorAll('.comments').forEach(textarea => {
+                    textarea.addEventListener('focus', function() {
+                        if (!isTimerRunning) {
+                            startTimer();
+                        }
+                    });
+                });
+
+                // Department select - Start timer on selection
+                departmentSelect.addEventListener('change', function() {
+                    if (this.value && !isTimerRunning) {
+                        startTimer();
+                    }
+                });
+
+                // Navigation buttons
+                prevBtn.addEventListener('click', showPreviousCategory);
+                nextBtn.addEventListener('click', showNextCategory);
+                
+                // Results buttons
+                retakeBtn.addEventListener('click', resetAssessment);
+                submitBtn.addEventListener('click', submitResults);
+
+                // Admin navigation
+                adminToggle.addEventListener('click', showLoginForm);
+                backToAssessment.addEventListener('click', showAssessment);
+                backToMain.addEventListener('click', showAssessment);
+                loginBtn.addEventListener('click', attemptLogin);
+                logoutBtn.addEventListener('click', logout);
+
+                // Admin actions
+                clearDataBtn.addEventListener('click', clearAllData);
+                exportDataBtn.addEventListener('click', exportData);
+
+                // Enter key for login
+                adminPasswordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        attemptLogin();
+                    }
+                });
+            }
+
+            // Timer Functions
+            function startTimer() {
+                if (!isTimerRunning) {
+                    startTime = Date.now() - elapsedTime;
+                    timerInterval = setInterval(updateTimer, 1000);
+                    isTimerRunning = true;
+                    document.body.classList.add('timer-active');
+                }
+            }
+
+            function updateTimer() {
+                const currentTime = Date.now();
+                elapsedTime = currentTime - startTime;
+                
+                const minutes = Math.floor(elapsedTime / 60000);
+                const seconds = Math.floor((elapsedTime % 60000) / 1000);
+                
+                const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                timerValue.textContent = formattedTime;
+                
+                // Add warning styles based on time
+                if (minutes >= 10) {
+                    timerValue.classList.add('timer-warning');
+                }
+                if (minutes >= 20) {
+                    timerValue.classList.add('timer-critical');
+                }
+            }
+
+            function stopTimer() {
+                if (isTimerRunning) {
+                    clearInterval(timerInterval);
+                    isTimerRunning = false;
+                    document.body.classList.remove('timer-active');
+                    
+                    // Store final time
+                    const minutes = Math.floor(elapsedTime / 60000);
+                    const seconds = Math.floor((elapsedTime % 60000) / 1000);
+                    const formattedTime = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                    
+                    finalTime.textContent = formattedTime;
+                    return formattedTime;
+                }
+                return '00:00';
+            }
+
+            function resetTimer() {
+                stopTimer();
+                elapsedTime = 0;
+                timerValue.textContent = '00:00';
+                timerValue.classList.remove('timer-warning', 'timer-critical');
+            }
+
+            function showNextCategory() {
+                if (currentCategory < categories.length - 1) {
+                    categories[currentCategory].classList.remove('active');
+                    currentCategory++;
+                    categories[currentCategory].classList.add('active');
+                    updateNavigation();
+                } else {
+                    const finalTime = stopTimer();
+                    calculateResults();
+                    showResults();
+                }
+            }
+
+            function showPreviousCategory() {
+                if (currentCategory > 0) {
+                    categories[currentCategory].classList.remove('active');
+                    currentCategory--;
+                    categories[currentCategory].classList.add('active');
+                    updateNavigation();
+                }
+            }
+
+            function updateNavigation() {
+                prevBtn.style.visibility = currentCategory === 0 ? 'hidden' : 'visible';
+                
+                if (currentCategory === categories.length - 1) {
+                    nextBtn.innerHTML = 'Calculate Results <i class="fas fa-calculator"></i>';
+                } else {
+                    nextBtn.innerHTML = 'Next <i class="fas fa-arrow-right"></i>';
+                }
+            }
+
+            function updateProgress() {
+                const totalQuestions = document.querySelectorAll('.question').length;
+                const answeredQuestions = document.querySelectorAll('.rating-option.selected').length;
+                const progress = (answeredQuestions / totalQuestions) * 100;
+                
+                progressFill.style.width = `${progress}%`;
+                progressText.textContent = `${Math.round(progress)}%`;
+            }
+
+            function calculateResults() {
+                // Calculate category scores
+                categories.forEach(category => {
+                    const categoryName = category.querySelector('h3').textContent.replace(/\(\d+ Questions\)/, '').trim();
+                    const questions = category.querySelectorAll('.question');
+                    let categoryScore = 0;
+                    let answeredQuestions = 0;
+                    
+                    questions.forEach(question => {
+                        const selectedOption = question.querySelector('.rating-option.selected');
+                        if (selectedOption) {
+                            categoryScore += parseInt(selectedOption.dataset.value);
+                            answeredQuestions++;
+                        }
+                    });
+                    
+                    if (answeredQuestions > 0) {
+                        scores[categoryName] = Math.round((categoryScore / (answeredQuestions * 5)) * 100);
+                    }
+                });
+
+                // Calculate overall score
+                const categoryNames = Object.keys(scores);
+                const totalScore = categoryNames.reduce((sum, category) => sum + scores[category], 0);
+                const overallScore = Math.round(totalScore / categoryNames.length);
+                
+                // Update results display
+                document.getElementById('overallScore').textContent = overallScore;
+                
+                // Update category scores
+                const categoryScoresContainer = document.getElementById('categoryScores');
+                categoryScoresContainer.innerHTML = '';
+                
+                categoryNames.forEach(category => {
+                    const scoreElement = document.createElement('div');
+                    scoreElement.className = 'category-score';
+                    scoreElement.innerHTML = `
+                        <h4>${category}</h4>
+                        <div class="value">${scores[category]}%</div>
+                    `;
+                    categoryScoresContainer.appendChild(scoreElement);
+                });
+
+                // Generate recommendations
+                generateRecommendations(overallScore);
+            }
+
+            function generateRecommendations(score) {
+                const recommendationsList = document.getElementById('recommendationsList');
+                recommendationsList.innerHTML = '';
+                
+                let recommendations = [];
+                
+                if (score < 40) {
+                    recommendations = [
+                        "Conduct strategic alignment workshops to connect departmental goals with business objectives",
+                        "Implement basic process documentation and standardization across all functions",
+                        "Establish clear KPIs and implement regular performance review cycles",
+                        "Provide foundational training on strategic thinking and data-driven decision making",
+                        "Create cross-functional teams to break down departmental silos"
+                    ];
+                } else if (score < 70) {
+                    recommendations = [
+                        "Optimize existing processes using Lean/Six Sigma methodologies",
+                        "Enhance cross-departmental collaboration through regular alignment meetings",
+                        "Implement advanced performance tracking with real-time dashboards",
+                        "Develop continuous improvement programs with measurable targets",
+                        "Invest in automation tools to reduce manual processes"
+                    ];
+                } else {
+                    recommendations = [
+                        "Focus on innovation and strategic differentiation in the market",
+                        "Implement predictive analytics for proactive decision-making",
+                        "Develop talent pipeline for future leadership roles with succession planning",
+                        "Explore AI and machine learning opportunities for process optimization",
+                        "Establish industry thought leadership through best practice sharing"
+                    ];
+                }
+                
+                recommendations.forEach(rec => {
+                    const li = document.createElement('li');
+                    li.textContent = rec;
+                    recommendationsList.appendChild(li);
+                });
+            }
+
+            function showResults() {
+                assessmentForm.style.display = 'none';
+                resultsContainer.style.display = 'block';
+                window.scrollTo(0, 0);
+            }
+
+            function resetAssessment() {
+                document.querySelectorAll('.rating-option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+                
+                document.querySelectorAll('.comments').forEach(textarea => {
+                    textarea.value = '';
+                });
+                
+                currentCategory = 0;
+                Object.keys(scores).forEach(key => {
+                    scores[key] = 0;
+                });
+                
+                categories.forEach((category, index) => {
+                    category.classList.remove('active');
+                    if (index === 0) {
+                        category.classList.add('active');
+                    }
+                });
+                
+                assessmentForm.style.display = 'block';
+                resultsContainer.style.display = 'none';
+                resetTimer();
+                updateProgress();
+                updateNavigation();
+                window.scrollTo(0, 0);
+            }
+
+            function submitResults() {
+                const department = departmentSelect.value;
+                if (!department) {
+                    alert('Please select your department before submitting.');
+                    return;
+                }
+                
+                // Calculate final score and get final time
+                const overallScore = parseInt(document.getElementById('overallScore').textContent);
+                const timeTaken = finalTime.textContent;
+                
+                // Store submission in localStorage
+                const submission = {
+                    department: department,
+                    score: overallScore,
+                    date: new Date().toISOString().split('T')[0],
+                    completed: true,
+                    timestamp: new Date().getTime(),
+                    timeTaken: timeTaken
+                };
+                
+                let submissions = JSON.parse(localStorage.getItem('assessmentSubmissions') || '[]');
+                submissions.push(submission);
+                localStorage.setItem('assessmentSubmissions', JSON.stringify(submissions));
+                
+                alert(`Assessment submitted successfully for ${department} department!\nYour score: ${overallScore}%\nTime taken: ${timeTaken}`);
+                
+                // Reset form
+                resetAssessment();
+                departmentSelect.value = '';
+            }
+
+            // Admin Login Functions
+            function showLoginForm() {
+                assessmentForm.style.display = 'none';
+                resultsContainer.style.display = 'none';
+                adminDashboard.style.display = 'none';
+                loginContainer.style.display = 'block';
+                
+                // Clear previous inputs and errors
+                adminIdInput.value = '';
+                adminPasswordInput.value = '';
+                hideErrors();
+                
+                window.scrollTo(0, 0);
+            }
+
+            function attemptLogin() {
+                const enteredId = adminIdInput.value.trim();
+                const enteredPassword = adminPasswordInput.value;
+                
+                hideErrors();
+                
+                if (!enteredId) {
+                    showError(idError, 'Please enter Admin ID');
+                    return;
+                }
+                
+                if (!enteredPassword) {
+                    showError(passwordError, 'Please enter password');
+                    return;
+                }
+                
+                if (enteredId === ADMIN_CREDENTIALS.id && enteredPassword === ADMIN_CREDENTIALS.password) {
+                    // Successful login
+                    loginContainer.style.display = 'none';
+                    adminDashboard.style.display = 'block';
+                    updateAdminDashboard();
+                    window.scrollTo(0, 0);
+                } else {
+                    showError(passwordError, 'Invalid Admin ID or password');
+                    // Shake animation for wrong credentials
+                    loginContainer.style.animation = 'shake 0.5s';
+                    setTimeout(() => {
+                        loginContainer.style.animation = '';
+                    }, 500);
+                }
+            }
+
+            function logout() {
+                adminDashboard.style.display = 'none';
+                assessmentForm.style.display = 'block';
+                window.scrollTo(0, 0);
+            }
+
+            function showAssessment() {
+                loginContainer.style.display = 'none';
+                adminDashboard.style.display = 'none';
+                assessmentForm.style.display = 'block';
+                window.scrollTo(0, 0);
+            }
+
+            function showError(errorElement, message) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+
+            function hideErrors() {
+                idError.style.display = 'none';
+                passwordError.style.display = 'none';
+            }
+
+            // Admin Dashboard Functions
+            function initializeAdminDashboard() {
+                if (!localStorage.getItem('assessmentSubmissions')) {
+                    localStorage.setItem('assessmentSubmissions', JSON.stringify(sampleSubmissions));
+                }
+            }
+
+            function updateAdminDashboard() {
+                const submissions = JSON.parse(localStorage.getItem('assessmentSubmissions') || '[]');
+                
+                // Update stats
+                totalSubmissions.textContent = submissions.length;
+                
+                const avg = submissions.length > 0 ? 
+                    Math.round(submissions.reduce((sum, sub) => sum + sub.score, 0) / submissions.length) : 0;
+                avgScore.textContent = `${avg}%`;
+                
+                completionRate.textContent = '100%';
+                
+                const uniqueDepts = [...new Set(submissions.map(sub => sub.department))];
+                departmentsCount.textContent = uniqueDepts.length;
+                
+                // Update department scores
+                deptScoresList.innerHTML = '';
+                const deptScores = {};
+                
+                submissions.forEach(sub => {
+                    if (!deptScores[sub.department]) {
+                        deptScores[sub.department] = [];
+                    }
+                    deptScores[sub.department].push(sub.score);
+                });
+                
+                Object.keys(deptScores).forEach(dept => {
+                    const avgScore = Math.round(deptScores[dept].reduce((a, b) => a + b) / deptScores[dept].length);
+                    const scoreClass = avgScore >= 70 ? 'score-high' : avgScore >= 50 ? 'score-medium' : 'score-low';
+                    
+                    const deptElement = document.createElement('div');
+                    deptElement.className = 'submission-item';
+                    deptElement.innerHTML = `
+                        <div>
+                            <strong>${dept}</strong>
+                            <div style="font-size: 0.8rem; color: var(--secondary);">${deptScores[dept].length} submission(s)</div>
+                        </div>
+                        <span class="score-badge ${scoreClass}">${avgScore}%</span>
+                    `;
+                    deptScoresList.appendChild(deptElement);
+                });
+                
+                // Update submissions list with time information
+                submissionsList.innerHTML = '';
+                const recentSubmissions = submissions
+                    .sort((a, b) => new Date(b.date) - new Date(a.date))
+                    .slice(0, 10);
+                
+                recentSubmissions.forEach(sub => {
+                    const scoreClass = sub.score >= 70 ? 'score-high' : sub.score >= 50 ? 'score-medium' : 'score-low';
+                    
+                    const subElement = document.createElement('div');
+                    subElement.className = 'submission-item';
+                    subElement.innerHTML = `
+                        <div>
+                            <strong>${sub.department}</strong>
+                            <div style="font-size: 0.8rem; color: var(--secondary);">
+                                ${sub.date} | Time: ${sub.timeTaken || 'N/A'}
+                            </div>
+                        </div>
+                        <span class="score-badge ${scoreClass}">${sub.score}%</span>
+                    `;
+                    submissionsList.appendChild(subElement);
+                });
+            }
+
+            function clearAllData() {
+    if (confirm('Are you sure you want to clear ALL assessment data? This action cannot be undone.')) {
+        localStorage.removeItem('assessmentSubmissions');
+        updateAdminDashboard();
+        alert('All assessment data has been permanently cleared.');
+    }
+}
+
+            function exportData() {
+                const submissions = JSON.parse(localStorage.getItem('assessmentSubmissions') || '[]');
+                const dataStr = JSON.stringify(submissions, null, 2);
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(dataBlob);
+                link.download = 'assessment_data.json';
+                link.click();
+                
+                alert('Data exported successfully!');
+            }
+
+            // Mobile-specific optimizations
+            document.addEventListener('touchstart', function() {}, { passive: true });
+            
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function(event) {
+                const now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+        });
+    </script>
+</body>
+</html>
